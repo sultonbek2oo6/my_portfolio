@@ -40,7 +40,6 @@ export default function Navbar() {
   const handleNavbarScroll = () => {
     if (scrollContainerRef.current) {
       const currentScroll = scrollContainerRef.current.scrollLeft;
-      // Agar foydalanuvchi 15px dan ko'proq yonga skrol qilsa, strelkani butunlay yashiramiz
       if (currentScroll > 15) {
         setShowArrow(false);
       } else {
@@ -61,7 +60,7 @@ export default function Navbar() {
           <div className="text-3xl font-extrabold bg-gradient-to-r from-[#C8A96A] via-[#E2C488] to-[#9E7B3D] bg-clip-text text-transparent cursor-pointer">
             Portfolio
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-5">
             <div className="hidden lg:flex items-center gap-8 text-sm font-semibold">
               {['home', 'projects', 'experience', 'skills', 'about', 'education', 'my_story', 'contact'].map((item) => {
                 const label = item === 'my_story' ? 'my story' : item;
@@ -70,9 +69,7 @@ export default function Navbar() {
                     key={item}
                     href={`#${item}`}
                     onClick={() => handleItemClick(item)}
-                    className={`relative capitalize transition-all duration-300 ${
-                      active === item ? 'text-[#b89245]' : 'text-[#3d3526] hover:text-[#C8A96A]'
-                    }`}
+                    className="relative capitalize transition-all duration-300 text-[#3d3526] hover:text-[#C8A96A]"
                   >
                     {label}
                     {active === item && (
@@ -82,6 +79,12 @@ export default function Navbar() {
                 );
               })}
             </div>
+
+            {/* 🌐 GOOGLE TRANSLATE CHUYNAGI */}
+            <div className="google-translate-container">
+              <div id="google_translate_element"></div>
+            </div>
+
             <div className="w-12 h-12 rounded-xl border border-[#C8A96A]/30 bg-[#f8f2e6] hover:shadow-[0_0_20px_rgba(200,169,106,0.25)] transition-all flex items-center justify-center cursor-pointer">
               <span className="text-[#C8A96A] text-xl">☀️</span>
             </div>
@@ -91,8 +94,6 @@ export default function Navbar() {
 
       {/* 📱 MOBILE BOTTOM NAVIGATION (FAQAT SMARTFON UCHUN) */}
       <div className="lg:hidden fixed bottom-5 left-1/2 -translate-x-1/2 w-[92%] max-w-md h-16 bg-[#f2e8d8]/85 backdrop-blur-xl border border-[#c8a96a]/25 rounded-2xl z-50 shadow-[0_10px_35px_0_rgba(200,169,106,0.2)] flex items-center overflow-hidden">
-        
-        {/* SKROL KONTEYNERI */}
         <div 
           ref={scrollContainerRef}
           onScroll={handleNavbarScroll}
@@ -124,16 +125,14 @@ export default function Navbar() {
           })}
         </div>
 
-        {/* 🌟 GRADIENT PARDA VA ANIMATSIYALI STRELKA (Faqat skrol qilinmaganda ko'rinadi) */}
         <div className={`absolute right-0 top-0 h-full w-14 bg-gradient-to-l from-[#f2e8d8] via-[#f2e8d8]/80 to-transparent pointer-events-none rounded-r-2xl flex items-center justify-end pr-2 transition-opacity duration-300 ${showArrow ? 'opacity-100' : 'opacity-0'}`}>
-          {/* Ohista o'ngga qarab sakrab-surilib turuvchi mitti oltin rangli strelka */}
           <svg className="w-5 h-5 text-[#b89245] animate-horizontal-bounce mr-1" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
           </svg>
         </div>
       </div>
 
-      {/* Skrol yashirish va Strelka animatsiyasi uchun maxsus stillar */}
+      {/* Skrol yashirish, Strelka animatsiyasi va Google Translate stillari */}
       <style jsx="true" global="true">{`
         .scrollbar-none::-webkit-scrollbar {
           display: none;
@@ -143,17 +142,35 @@ export default function Navbar() {
           scrollbar-width: none;
         }
         
-        /* Strelkani o'ngga qarab yumshoq qimirlatuvchi animatsiya */
         @keyframes horizontalBounce {
-          0%, 100% {
-            transform: translateX(0);
-          }
-          50% {
-            transform: translateX(5px);
-          }
+          0%, 100% { transform: translateX(0); }
+          50% { transform: translateX(5px); }
         }
         .animate-horizontal-bounce {
           animation: horizontalBounce 1.5s infinite ease-in-out;
+        }
+
+        /* Google Translate oynasini portfolio dizayniga moslash */
+        .google-translate-container .goog-te-gadget-simple {
+          background-color: #f8f2e6 !important;
+          border: 1px solid rgba(200, 169, 106, 0.3) !important;
+          padding: 8px 12px !important;
+          border-radius: 12px !important;
+          cursor: pointer !important;
+          transition: all 0.3s ease !important;
+          display: flex !important;
+          align-items: center !important;
+        }
+        .google-translate-container .goog-te-gadget-simple:hover {
+          box-shadow: 0 0 20px rgba(200, 169, 106, 0.25) !important;
+        }
+        .google-translate-container .goog-te-gadget-simple span {
+          color: #3d3526 !important;
+          font-weight: 600 !important;
+          font-size: 14px !important;
+        }
+        .google-translate-container .goog-te-menu-value img {
+          display: none !important; /* Google skriptining mitti o'qchalarini yashirish */
         }
       `}</style>
     </>
