@@ -35,7 +35,10 @@ const upload = multer({ storage });
 // =====================
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173", 
+      /\.vercel\.app$/ // Hamma Vercel havolalaridan keladigan so'rovlarga ruxsat beradi
+    ],
     credentials: true,
   })
 );
