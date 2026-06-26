@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-// apiBase (backend /api manzili) va imageBase (backend asosiy manzili) import qilamiz
-import { apiBase, imageBase } from "../utils/api";
+import { apiBase } from "../utils/api";
 
 export default function Projects() {
   const [projects, setProjects] = useState([]);
@@ -9,8 +8,7 @@ export default function Projects() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        // 🛠️ BUG FIX: apiBase o'zida /api bo'lgani uchun bu yerda faqat /projects yoziladi
-        const res = await fetch(`${apiBase}/projects`);
+        const res = await fetch(`${apiBase}/api/projects`);
 
         if (!res.ok) {
           throw new Error("Projects fetch failed");
@@ -63,9 +61,8 @@ export default function Projects() {
             className="w-full sm:w-[420px] bg-white dark:bg-[#1c1c1c] rounded-3xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-lg hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
           >
             {/* IMAGE */}
-            {/* 🛠️ BUG FIX: Rasm nomini Render backenddagi uploads papkasiga bog'laymiz */}
             <img
-              src={`${imageBase}/uploads/${p.image}`}
+              src={p.image}
               alt={p.title}
               className="w-full h-56 object-cover"
               onError={(e) => {
