@@ -1,20 +1,16 @@
 import React, { useEffect, useState, useRef } from 'react';
-// 🛠️ BUG FIX: apiBase (backend /api) va imageBase (backend asosiy manzili) ni olib kelamiz
-import { apiBase, imageBase } from "../utils/api";
+import { apiBase } from "../utils/api";
+import defaultHero from "../assets/hero.png";
 
+// Production uchun optimallashtirilgan rasm URL funksiyasi
 const getImageUrl = (imagePath) => {
-  if (!imagePath) return null;
+  if (!imagePath) return defaultHero;
   
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
     return imagePath;
   }
   
-  // 🛠️ BUG FIX: localhost:5001 o'rniga jonli Render backend havolasi ulandi
-  if (imagePath.startsWith('/uploads/')) {
-    return `${imageBase}${imagePath}`;
-  }
-  
-  return imagePath;
+  return `${apiBase}${imagePath}`;
 };
 
 export default function Hero() {
@@ -24,7 +20,7 @@ export default function Hero() {
     full_name: "Sultonbek",
     title: "Full-Stack Developer & Systems Analyst",
     description: "Passionate Developer & Systems Analyst with a focus on innovation, building scalable and elegant web experiences using modern technologies.",
-    hero_image: "/src/assets/hero.png",
+    hero_image: defaultHero,
     button1_text: "View My Work",
     button1_link: "#projects",
     button2_text: "Get In Touch",
@@ -41,8 +37,8 @@ export default function Hero() {
   const fetchHero = async () => {
     try {
       console.log("🔄 Fetching hero data...");
-      // 🛠️ BUG FIX: Shunchaki /api/hero emas, apiBase bilan Render-ga to'g'ri yo'naltirdik
-      const res = await fetch(`${apiBase}/hero`);
+      // Education komponenti bilan bir xil uslubda apiBase orqali chaqirildi
+      const res = await fetch(`${apiBase}/api/hero`);
       
       if (!res.ok) {
         console.warn(`⚠️ Hero API returned ${res.status}, using defaults`);
@@ -65,7 +61,7 @@ export default function Hero() {
           full_name: data.full_name || "Sultonbek",
           title: data.title || "Full-Stack Developer & Systems Analyst",
           description: data.description || "",
-          hero_image: data.hero_image || "/src/assets/hero.png",
+          hero_image: data.hero_image || defaultHero,
           button1_text: data.button1_text || "View My Work",
           button1_link: data.button1_link || "#projects",
           button2_text: data.button2_text || "Get In Touch",
