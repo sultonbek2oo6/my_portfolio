@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
+// 🛠️ BUG FIX: apiBase (backend /api) va imageBase (backend asosiy manzili) ni olib kelamiz
+import { apiBase, imageBase } from "../utils/api";
 
 const getImageUrl = (imagePath) => {
   if (!imagePath) return null;
@@ -7,8 +9,9 @@ const getImageUrl = (imagePath) => {
     return imagePath;
   }
   
+  // 🛠️ BUG FIX: localhost:5001 o'rniga jonli Render backend havolasi ulandi
   if (imagePath.startsWith('/uploads/')) {
-    return `http://localhost:5001${imagePath}`;
+    return `${imageBase}${imagePath}`;
   }
   
   return imagePath;
@@ -38,7 +41,8 @@ export default function Hero() {
   const fetchHero = async () => {
     try {
       console.log("🔄 Fetching hero data...");
-      const res = await fetch("/api/hero");
+      // 🛠️ BUG FIX: Shunchaki /api/hero emas, apiBase bilan Render-ga to'g'ri yo'naltirdik
+      const res = await fetch(`${apiBase}/hero`);
       
       if (!res.ok) {
         console.warn(`⚠️ Hero API returned ${res.status}, using defaults`);
@@ -117,7 +121,6 @@ export default function Hero() {
   return (
     <section
       id="home"
-      /* 🛠️ pt-28 pb-16 o'rniga pt-6 pb-12 lg:pt-28 lg:pb-16 berildi. Mobil ekran o'lchami uchun optimallashdi */
       className="reveal relative min-h-[calc(100vh-120px)] lg:min-h-screen flex items-center max-w-7xl mx-auto px-5 pt-6 pb-12 lg:pt-28 lg:pb-16 overflow-hidden scroll-mt-28"
       onMouseMove={handleMouseMove}
       style={heroScroll}
@@ -156,7 +159,6 @@ export default function Hero() {
           </p>
 
           {/* BUTTONS */}
-          {/* justify-center md:justify-start qo'shildi - mobil ekranda tugmalar markazda turishi uchun */}
           <div className="flex flex-row justify-center md:justify-start gap-4 pt-2">
             <a
               href={hero.button1_link}
