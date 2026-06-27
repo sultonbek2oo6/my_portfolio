@@ -3,8 +3,6 @@ import React, { useState, useEffect, useRef } from 'react';
 export default function Navbar() {
   const [active, setActive] = useState('home');
   const [showArrow, setShowArrow] = useState(true);
-  
-  // Standart holatda sayt bazadan kelgan til (uz) bo'yicha ochiladi
   const [currentLang, setCurrentLang] = useState(localStorage.getItem('user_lang') || 'uz'); 
   const scrollContainerRef = useRef(null);
 
@@ -21,7 +19,7 @@ export default function Navbar() {
 
   const changeLanguage = (langCode) => {
     setCurrentLang(langCode);
-    localStorage.setItem('user_lang', langCode); // Tanlangan tilni eslab qolish
+    localStorage.setItem('user_lang', langCode);
     
     const googleSelect = document.querySelector('.goog-te-combo');
     if (googleSelect) {
@@ -30,7 +28,6 @@ export default function Navbar() {
     }
   };
 
-  // Agar foydalanuvchi oldindan til tanlagan bo'lsa, sahifa yangilanganda o'sha til ishga tushadi
   useEffect(() => {
     const savedLang = localStorage.getItem('user_lang');
     if (savedLang && savedLang !== 'uz') {
@@ -68,29 +65,32 @@ export default function Navbar() {
     }
   };
 
-  const handleItemClick = (item) => {
-    setActive(item);
-  };
-
   return (
     <>
       {/* 💻 DESKTOP & NOTBUK NAVBAR */}
       <nav className="fixed top-0 left-0 w-full z-50 border-b border-[#c8a96a]/20 backdrop-blur-xl bg-[#f2e8d8]/70 shadow-sm">
-        <div className="max-w-7xl mx-auto px-5 h-20 flex items-center justify-between">
-          <div className="text-3xl font-extrabold bg-gradient-to-r from-[#C8A96A] via-[#E2C488] to-[#9E7B3D] bg-clip-text text-transparent cursor-pointer">
+        <div className="max-w-7xl mx-auto px-5 h-20 flex items-center justify-between gap-4">
+          
+          {/* Logo - Tarjima qilinmasligi uchun notranslate qo'shildi */}
+          <div className="skiptranslate notranslate text-3xl font-extrabold bg-gradient-to-r from-[#C8A96A] via-[#E2C488] to-[#9E7B3D] bg-clip-text text-transparent cursor-pointer min-w-max">
             Portfolio
           </div>
           
-          <div className="flex items-center gap-6">
-            <div className="hidden lg:flex items-center gap-8 text-sm font-semibold">
+          {/* O'ng tarafdagi elementlar bloki - flex-wrap qo'shildi ruscha sig'ishi uchun */}
+          <div className="flex items-center justify-end gap-4 lg:gap-6 flex-1 flex-wrap lg:flex-nowrap">
+            
+            {/* Menyular */}
+            <div className="hidden lg:flex items-center gap-6 xl:gap-8 text-sm font-semibold whitespace-nowrap">
               {['home', 'projects', 'experience', 'skills', 'about', 'education', 'my_story', 'contact'].map((item) => {
                 const label = item === 'my_story' ? 'my story' : item;
                 return (
                   <a
                     key={item}
                     href={`#${item}`}
-                    onClick={() => handleItemClick(item)}
-                    className="relative capitalize transition-all duration-300 text-[#3d3526] hover:text-[#C8A96A]"
+                    onClick={() => setActive(item)}
+                    className={`relative capitalize transition-all duration-300 ${
+                      active === item ? 'text-[#b89245]' : 'text-[#3d3526] hover:text-[#C8A96A]'
+                    }`}
                   >
                     {label}
                     {active === item && (
@@ -101,8 +101,8 @@ export default function Navbar() {
               })}
             </div>
 
-            {/* 🌐 KLASSI O'ZGARTIRILGAN TIL ALMASHTIRGICH PANEL (notranslate klassi bilan) */}
-            <div className="skiptranslate notranslate flex items-center gap-1.5 text-xs font-bold tracking-wider text-[#3d3526]/80 bg-[#f8f2e6]/50 px-3 py-2 rounded-xl border border-[#C8A96A]/15 shadow-inner">
+            {/* 🌐 TIL PANELI (notranslate kuchaytirildi) */}
+            <div className="skiptranslate notranslate flex items-center gap-1.5 text-xs font-bold tracking-wider text-[#3d3526]/80 bg-[#f8f2e6]/50 px-3 py-2 rounded-xl border border-[#C8A96A]/15 shadow-inner min-w-max">
               <button 
                 onClick={() => changeLanguage('uz')} 
                 className={`px-2 py-0.5 rounded transition-all cursor-pointer ${currentLang === 'uz' ? 'bg-[#C8A96A] text-[#f2e8d8] shadow-sm scale-105' : 'hover:text-[#C8A96A]'}`}
@@ -126,7 +126,7 @@ export default function Navbar() {
             </div>
 
             {/* TUN/KUN EFFEKTI */}
-            <div className="w-12 h-12 rounded-xl border border-[#C8A96A]/30 bg-[#f8f2e6] hover:shadow-[0_0_20px_rgba(200,169,106,0.25)] transition-all flex items-center justify-center cursor-pointer">
+            <div className="skiptranslate notranslate w-12 h-12 rounded-xl border border-[#C8A96A]/30 bg-[#f8f2e6] hover:shadow-[0_0_20px_rgba(200,169,106,0.25)] transition-all flex items-center justify-center cursor-pointer min-w-[48px]">
               <span className="text-[#C8A96A] text-xl">☀️</span>
             </div>
           </div>
@@ -146,13 +146,14 @@ export default function Navbar() {
               <a
                 key={item.id}
                 href={`#${item.id}`}
-                onClick={() => handleItemClick(item.id)}
+                onClick={() => setActive(item.id)}
                 className="relative flex flex-col items-center justify-center min-w-[60px] h-14 rounded-xl transition-all duration-300 select-none"
               >
                 {isActive && (
                   <div className="absolute -top-1 w-8 h-8 bg-[#C8A96A] opacity-30 blur-md rounded-full transition-all duration-500" />
                 )}
-                <div className={`transition-all duration-300 ${isActive ? 'text-[#b89245] scale-110 -translate-y-0.5' : 'text-[#6e5d43]'}`}>
+                {/* Ikonkani skiptranslate qildik, Google uni buzib yubormasligi uchun */}
+                <div className={`skiptranslate notranslate transition-all duration-300 ${isActive ? 'text-[#b89245] scale-110 -translate-y-0.5' : 'text-[#6e5d43]'}`}>
                   {item.icon}
                 </div>
                 <span className={`text-[10px] capitalize mt-0.5 transition-colors duration-300 ${isActive ? 'text-[#b89245] font-bold' : 'text-[#6e5d43]'}`}>
@@ -166,7 +167,7 @@ export default function Navbar() {
           })}
         </div>
 
-        <div className={`absolute right-0 top-0 h-full w-14 bg-gradient-to-l from-[#f2e8d8] via-[#f2e8d8]/80 to-transparent pointer-events-none rounded-r-2xl flex items-center justify-end pr-2 transition-opacity duration-300 ${showArrow ? 'opacity-100' : 'opacity-0'}`}>
+        <div className={`skiptranslate notranslate absolute right-0 top-0 h-full w-14 bg-gradient-to-l from-[#f2e8d8] via-[#f2e8d8]/80 to-transparent pointer-events-none rounded-r-2xl flex items-center justify-end pr-2 transition-opacity duration-300 ${showArrow ? 'opacity-100' : 'opacity-0'}`}>
           <svg className="w-5 h-5 text-[#b89245] animate-horizontal-bounce mr-1" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
           </svg>
@@ -174,20 +175,10 @@ export default function Navbar() {
       </div>
 
       <style jsx="true" global="true">{`
-        .scrollbar-none::-webkit-scrollbar {
-          display: none;
-        }
-        .scrollbar-none {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-        @keyframes horizontalBounce {
-          0%, 100% { transform: translateX(0); }
-          50% { transform: translateX(5px); }
-        }
-        .animate-horizontal-bounce {
-          animation: horizontalBounce 1.5s infinite ease-in-out;
-        }
+        .scrollbar-none::-webkit-scrollbar { display: none; }
+        .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes horizontalBounce { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
+        .animate-horizontal-bounce { animation: horizontalBounce 1.5s infinite ease-in-out; }
       `}</style>
     </>
   );
