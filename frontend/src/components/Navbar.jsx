@@ -2,8 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 export default function Navbar() {
   const [active, setActive] = useState('home');
-  const [showArrow, setShowArrow] = useState(true);
-  const [currentLang, setCurrentLang] = useState(localStorage.getItem('user_lang') || 'uz'); 
+  const [showArrow, setShowArrow] = useState(true); // Strelkani ko'rsatish/yashirish holati
   const scrollContainerRef = useRef(null);
 
   const navItems = [
@@ -17,24 +16,7 @@ export default function Navbar() {
     { id: 'contact', label: 'contact', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L22 8m-9 13a9 9 0 110-18 9 9 0 010 18z"></path></svg> },
   ];
 
-  const changeLanguage = (langCode) => {
-    setCurrentLang(langCode);
-    localStorage.setItem('user_lang', langCode);
-    
-    const googleSelect = document.querySelector('.goog-te-combo');
-    if (googleSelect) {
-      googleSelect.value = langCode;
-      googleSelect.dispatchEvent(new Event('change'));
-    }
-  };
-
-  useEffect(() => {
-    const savedLang = localStorage.getItem('user_lang');
-    if (savedLang && savedLang !== 'uz') {
-      setTimeout(() => changeLanguage(savedLang), 1000);
-    }
-  }, []);
-
+  // Sahifa skrol bo'lganda yuqoridan kuzatish
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY + 300;
@@ -54,9 +36,11 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // 📱 Mobil navbar ichidagi skrolni kuzatish funksiyasi
   const handleNavbarScroll = () => {
     if (scrollContainerRef.current) {
       const currentScroll = scrollContainerRef.current.scrollLeft;
+      // Agar foydalanuvchi 15px dan ko'proq yonga skrol qilsa, strelkani butunlay yashiramiz
       if (currentScroll > 15) {
         setShowArrow(false);
       } else {
@@ -65,29 +49,27 @@ export default function Navbar() {
     }
   };
 
+  const handleItemClick = (item) => {
+    setActive(item);
+  };
+
   return (
     <>
       {/* 💻 DESKTOP & NOTBUK NAVBAR */}
       <nav className="fixed top-0 left-0 w-full z-50 border-b border-[#c8a96a]/20 backdrop-blur-xl bg-[#f2e8d8]/70 shadow-sm">
-        <div className="max-w-7xl mx-auto px-5 h-20 flex items-center justify-between gap-4">
-          
-          {/* Logo - Tarjima qilinmasligi uchun notranslate qo'shildi */}
-          <div className="skiptranslate notranslate text-3xl font-extrabold bg-gradient-to-r from-[#C8A96A] via-[#E2C488] to-[#9E7B3D] bg-clip-text text-transparent cursor-pointer min-w-max">
+        <div className="max-w-7xl mx-auto px-5 h-20 flex items-center justify-between">
+          <div className="text-3xl font-extrabold bg-gradient-to-r from-[#C8A96A] via-[#E2C488] to-[#9E7B3D] bg-clip-text text-transparent cursor-pointer">
             Portfolio
           </div>
-          
-          {/* O'ng tarafdagi elementlar bloki - flex-wrap qo'shildi ruscha sig'ishi uchun */}
-          <div className="flex items-center justify-end gap-4 lg:gap-6 flex-1 flex-wrap lg:flex-nowrap">
-            
-            {/* Menyular */}
-            <div className="hidden lg:flex items-center gap-6 xl:gap-8 text-sm font-semibold whitespace-nowrap">
+          <div className="flex items-center gap-3">
+            <div className="hidden lg:flex items-center gap-8 text-sm font-semibold">
               {['home', 'projects', 'experience', 'skills', 'about', 'education', 'my_story', 'contact'].map((item) => {
                 const label = item === 'my_story' ? 'my story' : item;
                 return (
                   <a
                     key={item}
                     href={`#${item}`}
-                    onClick={() => setActive(item)}
+                    onClick={() => handleItemClick(item)}
                     className={`relative capitalize transition-all duration-300 ${
                       active === item ? 'text-[#b89245]' : 'text-[#3d3526] hover:text-[#C8A96A]'
                     }`}
@@ -100,41 +82,17 @@ export default function Navbar() {
                 );
               })}
             </div>
-
-            {/* 🌐 TIL PANELI (notranslate kuchaytirildi) */}
-            <div className="skiptranslate notranslate flex items-center gap-1.5 text-xs font-bold tracking-wider text-[#3d3526]/80 bg-[#f8f2e6]/50 px-3 py-2 rounded-xl border border-[#C8A96A]/15 shadow-inner min-w-max">
-              <button 
-                onClick={() => changeLanguage('uz')} 
-                className={`px-2 py-0.5 rounded transition-all cursor-pointer ${currentLang === 'uz' ? 'bg-[#C8A96A] text-[#f2e8d8] shadow-sm scale-105' : 'hover:text-[#C8A96A]'}`}
-              >
-                UZ
-              </button>
-              <span className="text-[#C8A96A]/30 font-normal">|</span>
-              <button 
-                onClick={() => changeLanguage('ru')} 
-                className={`px-2 py-0.5 rounded transition-all cursor-pointer ${currentLang === 'ru' ? 'bg-[#C8A96A] text-[#f2e8d8] shadow-sm scale-105' : 'hover:text-[#C8A96A]'}`}
-              >
-                RU
-              </button>
-              <span className="text-[#C8A96A]/30 font-normal">|</span>
-              <button 
-                onClick={() => changeLanguage('en')} 
-                className={`px-2 py-0.5 rounded transition-all cursor-pointer ${currentLang === 'en' ? 'bg-[#C8A96A] text-[#f2e8d8] shadow-sm scale-105' : 'hover:text-[#C8A96A]'}`}
-              >
-                EN
-              </button>
-            </div>
-
-            {/* TUN/KUN EFFEKTI */}
-            <div className="skiptranslate notranslate w-12 h-12 rounded-xl border border-[#C8A96A]/30 bg-[#f8f2e6] hover:shadow-[0_0_20px_rgba(200,169,106,0.25)] transition-all flex items-center justify-center cursor-pointer min-w-[48px]">
+            <div className="w-12 h-12 rounded-xl border border-[#C8A96A]/30 bg-[#f8f2e6] hover:shadow-[0_0_20px_rgba(200,169,106,0.25)] transition-all flex items-center justify-center cursor-pointer">
               <span className="text-[#C8A96A] text-xl">☀️</span>
             </div>
           </div>
         </div>
       </nav>
 
-      {/* 📱 MOBILE BOTTOM NAVIGATION */}
+      {/* 📱 MOBILE BOTTOM NAVIGATION (FAQAT SMARTFON UCHUN) */}
       <div className="lg:hidden fixed bottom-5 left-1/2 -translate-x-1/2 w-[92%] max-w-md h-16 bg-[#f2e8d8]/85 backdrop-blur-xl border border-[#c8a96a]/25 rounded-2xl z-50 shadow-[0_10px_35px_0_rgba(200,169,106,0.2)] flex items-center overflow-hidden">
+        
+        {/* SKROL KONTEYNERI */}
         <div 
           ref={scrollContainerRef}
           onScroll={handleNavbarScroll}
@@ -146,14 +104,13 @@ export default function Navbar() {
               <a
                 key={item.id}
                 href={`#${item.id}`}
-                onClick={() => setActive(item.id)}
+                onClick={() => handleItemClick(item.id)}
                 className="relative flex flex-col items-center justify-center min-w-[60px] h-14 rounded-xl transition-all duration-300 select-none"
               >
                 {isActive && (
                   <div className="absolute -top-1 w-8 h-8 bg-[#C8A96A] opacity-30 blur-md rounded-full transition-all duration-500" />
                 )}
-                {/* Ikonkani skiptranslate qildik, Google uni buzib yubormasligi uchun */}
-                <div className={`skiptranslate notranslate transition-all duration-300 ${isActive ? 'text-[#b89245] scale-110 -translate-y-0.5' : 'text-[#6e5d43]'}`}>
+                <div className={`transition-all duration-300 ${isActive ? 'text-[#b89245] scale-110 -translate-y-0.5' : 'text-[#6e5d43]'}`}>
                   {item.icon}
                 </div>
                 <span className={`text-[10px] capitalize mt-0.5 transition-colors duration-300 ${isActive ? 'text-[#b89245] font-bold' : 'text-[#6e5d43]'}`}>
@@ -167,18 +124,37 @@ export default function Navbar() {
           })}
         </div>
 
-        <div className={`skiptranslate notranslate absolute right-0 top-0 h-full w-14 bg-gradient-to-l from-[#f2e8d8] via-[#f2e8d8]/80 to-transparent pointer-events-none rounded-r-2xl flex items-center justify-end pr-2 transition-opacity duration-300 ${showArrow ? 'opacity-100' : 'opacity-0'}`}>
+        {/* 🌟 GRADIENT PARDA VA ANIMATSIYALI STRELKA (Faqat skrol qilinmaganda ko'rinadi) */}
+        <div className={`absolute right-0 top-0 h-full w-14 bg-gradient-to-l from-[#f2e8d8] via-[#f2e8d8]/80 to-transparent pointer-events-none rounded-r-2xl flex items-center justify-end pr-2 transition-opacity duration-300 ${showArrow ? 'opacity-100' : 'opacity-0'}`}>
+          {/* Ohista o'ngga qarab sakrab-surilib turuvchi mitti oltin rangli strelka */}
           <svg className="w-5 h-5 text-[#b89245] animate-horizontal-bounce mr-1" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
           </svg>
         </div>
       </div>
 
+      {/* Skrol yashirish va Strelka animatsiyasi uchun maxsus stillar */}
       <style jsx="true" global="true">{`
-        .scrollbar-none::-webkit-scrollbar { display: none; }
-        .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
-        @keyframes horizontalBounce { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
-        .animate-horizontal-bounce { animation: horizontalBounce 1.5s infinite ease-in-out; }
+        .scrollbar-none::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-none {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        
+        /* Strelkani o'ngga qarab yumshoq qimirlatuvchi animatsiya */
+        @keyframes horizontalBounce {
+          0%, 100% {
+            transform: translateX(0);
+          }
+          50% {
+            transform: translateX(5px);
+          }
+        }
+        .animate-horizontal-bounce {
+          animation: horizontalBounce 1.5s infinite ease-in-out;
+        }
       `}</style>
     </>
   );
