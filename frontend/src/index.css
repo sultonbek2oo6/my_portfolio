@@ -180,3 +180,33 @@ main {
 }
 
 
+/* ==========================================================================
+   GOOGLE TRANSLATE YASHIRISH VA ARTIFAKTLARNI TOZALASH STIllARI
+   ========================================================================== */
+
+/* Google Translate'ning o'z asl oynalarini va select elementlarini yashirish */
+.goog-te-banner-frame.skiptranslate,
+.goog-te-banner,
+.goog-te-gadget,
+#goog-gt-tt {
+  display: none !important;
+}
+
+/* Google Translate tufayli body tepasida hosil bo'ladigan bo'shliqni yo'qotish */
+body {
+  top: 0px !important;
+  position: static !important;
+}
+
+/* Tarjima vaqtida ko'k rangli text highlight (belgilash) effektini o'chirish */
+.goog-text-highlight {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  box-sizing: border-box !important;
+}
+
+/* iframe holatidagi elementlarni bloklash */
+iframe.skiptranslate {
+  display: none !important;
+  visibility: hidden !important;
+}

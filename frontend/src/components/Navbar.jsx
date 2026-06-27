@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 export default function Navbar() {
   const [active, setActive] = useState('home');
   const [showArrow, setShowArrow] = useState(true); // Strelkani ko'rsatish/yashirish holati
+  const [currentLang, setCurrentLang] = useState('uz'); // Hozirgi til holati
   const scrollContainerRef = useRef(null);
 
   const navItems = [
@@ -16,7 +17,16 @@ export default function Navbar() {
     { id: 'contact', label: 'contact', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L22 8m-9 13a9 9 0 110-18 9 9 0 010 18z"></path></svg> },
   ];
 
-  // Sahifa skrol bo'lganda yuqoridan kuzatish
+  // Google Translate orqali tilni almashtirish funksiyasi
+  const changeLanguage = (langCode) => {
+    setCurrentLang(langCode);
+    const googleSelect = document.querySelector('.goog-te-combo');
+    if (googleSelect) {
+      googleSelect.value = langCode;
+      googleSelect.dispatchEvent(new Event('change'));
+    }
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY + 300;
@@ -36,11 +46,9 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // 📱 Mobil navbar ichidagi skrolni kuzatish funksiyasi
   const handleNavbarScroll = () => {
     if (scrollContainerRef.current) {
       const currentScroll = scrollContainerRef.current.scrollLeft;
-      // Agar foydalanuvchi 15px dan ko'proq yonga skrol qilsa, strelkani butunlay yashiramiz
       if (currentScroll > 15) {
         setShowArrow(false);
       } else {
@@ -61,7 +69,8 @@ export default function Navbar() {
           <div className="text-3xl font-extrabold bg-gradient-to-r from-[#C8A96A] via-[#E2C488] to-[#9E7B3D] bg-clip-text text-transparent cursor-pointer">
             Portfolio
           </div>
-          <div className="flex items-center gap-3">
+          
+          <div className="flex items-center gap-6">
             <div className="hidden lg:flex items-center gap-8 text-sm font-semibold">
               {['home', 'projects', 'experience', 'skills', 'about', 'education', 'my_story', 'contact'].map((item) => {
                 const label = item === 'my_story' ? 'my story' : item;
@@ -82,6 +91,32 @@ export default function Navbar() {
                 );
               })}
             </div>
+
+            {/* 🌐 PREMIYUM TIL ALMASHTIRGICH PANEL (Screenshot dagi kabi dizayn) */}
+            <div className="flex items-center gap-1.5 text-xs font-bold tracking-wider text-[#3d3526]/80 bg-[#f8f2e6]/50 px-3 py-2 rounded-xl border border-[#C8A96A]/15 shadow-inner">
+              <button 
+                onClick={() => changeLanguage('uz')} 
+                className={`px-2 py-0.5 rounded transition-all cursor-pointer ${currentLang === 'uz' ? 'bg-[#C8A96A] text-[#f2e8d8] shadow-sm scale-105' : 'hover:text-[#C8A96A]'}`}
+              >
+                UZ
+              </button>
+              <span className="text-[#C8A96A]/30 font-normal">|</span>
+              <button 
+                onClick={() => changeLanguage('ru')} 
+                className={`px-2 py-0.5 rounded transition-all cursor-pointer ${currentLang === 'ru' ? 'bg-[#C8A96A] text-[#f2e8d8] shadow-sm scale-105' : 'hover:text-[#C8A96A]'}`}
+              >
+                RU
+              </button>
+              <span className="text-[#C8A96A]/30 font-normal">|</span>
+              <button 
+                onClick={() => changeLanguage('en')} 
+                className={`px-2 py-0.5 rounded transition-all cursor-pointer ${currentLang === 'en' ? 'bg-[#C8A96A] text-[#f2e8d8] shadow-sm scale-105' : 'hover:text-[#C8A96A]'}`}
+              >
+                EN
+              </button>
+            </div>
+
+            {/* TUN/KUN EFFEKTI */}
             <div className="w-12 h-12 rounded-xl border border-[#C8A96A]/30 bg-[#f8f2e6] hover:shadow-[0_0_20px_rgba(200,169,106,0.25)] transition-all flex items-center justify-center cursor-pointer">
               <span className="text-[#C8A96A] text-xl">☀️</span>
             </div>
@@ -89,10 +124,8 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* 📱 MOBILE BOTTOM NAVIGATION (FAQAT SMARTFON UCHUN) */}
+      {/* 📱 MOBILE BOTTOM NAVIGATION */}
       <div className="lg:hidden fixed bottom-5 left-1/2 -translate-x-1/2 w-[92%] max-w-md h-16 bg-[#f2e8d8]/85 backdrop-blur-xl border border-[#c8a96a]/25 rounded-2xl z-50 shadow-[0_10px_35px_0_rgba(200,169,106,0.2)] flex items-center overflow-hidden">
-        
-        {/* SKROL KONTEYNERI */}
         <div 
           ref={scrollContainerRef}
           onScroll={handleNavbarScroll}
@@ -124,16 +157,13 @@ export default function Navbar() {
           })}
         </div>
 
-        {/* 🌟 GRADIENT PARDA VA ANIMATSIYALI STRELKA (Faqat skrol qilinmaganda ko'rinadi) */}
         <div className={`absolute right-0 top-0 h-full w-14 bg-gradient-to-l from-[#f2e8d8] via-[#f2e8d8]/80 to-transparent pointer-events-none rounded-r-2xl flex items-center justify-end pr-2 transition-opacity duration-300 ${showArrow ? 'opacity-100' : 'opacity-0'}`}>
-          {/* Ohista o'ngga qarab sakrab-surilib turuvchi mitti oltin rangli strelka */}
           <svg className="w-5 h-5 text-[#b89245] animate-horizontal-bounce mr-1" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
           </svg>
         </div>
       </div>
 
-      {/* Skrol yashirish va Strelka animatsiyasi uchun maxsus stillar */}
       <style jsx="true" global="true">{`
         .scrollbar-none::-webkit-scrollbar {
           display: none;
@@ -142,15 +172,9 @@ export default function Navbar() {
           -ms-overflow-style: none;
           scrollbar-width: none;
         }
-        
-        /* Strelkani o'ngga qarab yumshoq qimirlatuvchi animatsiya */
         @keyframes horizontalBounce {
-          0%, 100% {
-            transform: translateX(0);
-          }
-          50% {
-            transform: translateX(5px);
-          }
+          0%, 100% { transform: translateX(0); }
+          50% { transform: translateX(5px); }
         }
         .animate-horizontal-bounce {
           animation: horizontalBounce 1.5s infinite ease-in-out;
