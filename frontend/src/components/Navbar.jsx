@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 
 export default function Navbar() {
   const [active, setActive] = useState('home');
-  const [showArrow, setShowArrow] = useState(true); // Strelkani ko'rsatish/yashirish holati
-  const [currentLang, setCurrentLang] = useState('uz'); // Hozirgi til holati
+  const [showArrow, setShowArrow] = useState(true);
+  
+  // Standart holatda sayt bazadan kelgan til (uz) bo'yicha ochiladi
+  const [currentLang, setCurrentLang] = useState(localStorage.getItem('user_lang') || 'uz'); 
   const scrollContainerRef = useRef(null);
 
   const navItems = [
@@ -17,15 +19,24 @@ export default function Navbar() {
     { id: 'contact', label: 'contact', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L22 8m-9 13a9 9 0 110-18 9 9 0 010 18z"></path></svg> },
   ];
 
-  // Google Translate orqali tilni almashtirish funksiyasi
   const changeLanguage = (langCode) => {
     setCurrentLang(langCode);
+    localStorage.setItem('user_lang', langCode); // Tanlangan tilni eslab qolish
+    
     const googleSelect = document.querySelector('.goog-te-combo');
     if (googleSelect) {
       googleSelect.value = langCode;
       googleSelect.dispatchEvent(new Event('change'));
     }
   };
+
+  // Agar foydalanuvchi oldindan til tanlagan bo'lsa, sahifa yangilanganda o'sha til ishga tushadi
+  useEffect(() => {
+    const savedLang = localStorage.getItem('user_lang');
+    if (savedLang && savedLang !== 'uz') {
+      setTimeout(() => changeLanguage(savedLang), 1000);
+    }
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -79,9 +90,7 @@ export default function Navbar() {
                     key={item}
                     href={`#${item}`}
                     onClick={() => handleItemClick(item)}
-                    className={`relative capitalize transition-all duration-300 ${
-                      active === item ? 'text-[#b89245]' : 'text-[#3d3526] hover:text-[#C8A96A]'
-                    }`}
+                    className="relative capitalize transition-all duration-300 text-[#3d3526] hover:text-[#C8A96A]"
                   >
                     {label}
                     {active === item && (
@@ -92,8 +101,8 @@ export default function Navbar() {
               })}
             </div>
 
-            {/* 🌐 PREMIYUM TIL ALMASHTIRGICH PANEL (Screenshot dagi kabi dizayn) */}
-            <div className="flex items-center gap-1.5 text-xs font-bold tracking-wider text-[#3d3526]/80 bg-[#f8f2e6]/50 px-3 py-2 rounded-xl border border-[#C8A96A]/15 shadow-inner">
+            {/* 🌐 KLASSI O'ZGARTIRILGAN TIL ALMASHTIRGICH PANEL (notranslate klassi bilan) */}
+            <div className="skiptranslate notranslate flex items-center gap-1.5 text-xs font-bold tracking-wider text-[#3d3526]/80 bg-[#f8f2e6]/50 px-3 py-2 rounded-xl border border-[#C8A96A]/15 shadow-inner">
               <button 
                 onClick={() => changeLanguage('uz')} 
                 className={`px-2 py-0.5 rounded transition-all cursor-pointer ${currentLang === 'uz' ? 'bg-[#C8A96A] text-[#f2e8d8] shadow-sm scale-105' : 'hover:text-[#C8A96A]'}`}
