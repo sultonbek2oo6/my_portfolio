@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-
+import { apiBase } from "../utils/api";
 export default function Contact() {
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
   const [isSending, setIsSending] = useState(false);
   const [contactLinks, setContactLinks] = useState([]);
-  const apiBase = import.meta.env.VITE_API_BASE || "http://localhost:5001";
+  
 
   // Matn konstantalari muharrirda yorqin ko'rinishi uchun:
   const sectionTitle = "Get In Touch";
